@@ -8,15 +8,11 @@ function MovieList() {
     getUsers();
   }, []);
 
-  useEffect(() => {
-    axios.get("https://localhost:7052/api/Movie").then((data) => {
-      console.log("checkdata", data.data);
-    });
-  }, []);
   const getUsers = async () => {
     let res = await fetchAllMovie();
-    if (res && res.data) {
-      setListMovies(res.data);
+    console.log(res);
+    if (res) {
+      setListMovies(res);
     }
   };
   return (

@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios from "./customize-axios";
 const fetchAllMovie = () => {
-  return axios.get("https://localhost:7052/api/Movie");
+  return axios.get("Movie");
 };
 
 export { fetchAllMovie };
