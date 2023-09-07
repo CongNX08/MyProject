@@ -65,6 +65,15 @@ namespace CinemaWebAPI
                 };
             });
             builder.Services.AddAuthorization();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowReactApp", builder =>
+                {
+                    builder.WithOrigins("http://localhost:3000")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -73,7 +82,7 @@ namespace CinemaWebAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseCors("AllowReactApp");
             app.UseAuthentication();
             app.UseAuthorization();
 

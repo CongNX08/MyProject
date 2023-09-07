@@ -17,6 +17,7 @@ namespace CinemaWeb
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -30,6 +31,7 @@ namespace CinemaWeb
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSession();
