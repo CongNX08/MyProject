@@ -1,0 +1,97 @@
+﻿@model IEnumerable<DataAccess.DTO.RateDTO>
+
+<div class="container w-full border border-gray-200 rounded-lg bg-gray-200 dark:bg-gray-700 dark:border-gray-600 mt-10 mb-20 pb-2">
+    <div class="text-3xl font-medium border-b-2 py-2">Manage Movie</div>
+    <div class=" mx-auto flex">
+        <div class="w-8/12">
+            <div>
+                <video class="w-full" controls>
+                    <source src="/docs/videos/flowbite.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <div class="w-2/3 pt-4 ">
+                <!-- Occupies 4 out of 12 columns -->
+                <img class="w-96 h-60 rounded-3xl" src=" @ViewBag.Movie.Image " alt="FirstSlide">
+            </div>
+            <div class="w-7/12 ">
+                <div class=" border-b-2 border-gray-500">
+                    <div class="text-yellow-500 font-bold text-2xl rounded-lg block p-2.5 border-none bg-transparent focus:ring-0">@ViewBag.Movie.Title</div>
+                    <div class="flex">
+                        <div class="text-yellow-500 font-semibold mr-1">
+                            Descripton:
+                        </div>
+                        @ViewBag.Movie.Description
+                    </div>
+
+                    <div class="flex">
+                        <div class="text-yellow-500 font-semibold mr-1">
+                            Genre:
+                        </div>
+                        @ViewBag.Movie.Genre
+                    </div>
+
+                </div>
+
+
+                <div class="flex items-center content-center">
+                    <div class="flex">
+                        <div class="text-yellow-500 font-semibold mr-1">
+                            Rate:
+                        </div>
+                        @ViewBag.Movie.RatingPoint
+                    </div>
+                    <i class="fa-solid fa-star text-3xl" style="color: #fbf304;"></i>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="w-5/12 ml-4">
+            <form class="">
+                <table class="text-sm w-full text-center border-collapse border border-yellow-700 ">
+                    <thead class="text-lg font-medium text-gray-900 bg-gray-200  ">
+                        <tr>
+                            <th scope="col" class="py-3 px-8 border border-slate-300">
+                                PersonName
+                            </th>
+                            <th scope="col" class="py-3 px-8 border border-slate-300">
+                                Comment
+                            </th>
+                            <th scope="col" class="py-3 px-8 border border-slate-300">
+                                Time
+                            </th>
+                            <th scope="col" class="py-3 px-8 border border-slate-300">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr class="bg-white border-b bg-gray-50 text-back-900">
+                                    <td scope="row" class="py-4 px-8 border border-slate-300">@item.PersonName</td>
+                                    <td class="py-4 px-8 border border-slate-300">@item.Comment</td>
+                                    <td class="py-4 px-8 border border-slate-300">@item.Time</td>
+                                    <td class="py-4 px-8 border border-slate-300">
+                                        <a asp-controller="Rate" asp-action="Delete" asp-route-movieID="@item.MovieId" asp-route-personID="@item.PersonId" class="btn btn-danger"> <i class="bi bi-trash3-fill"></i>Delete </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+    <div class="flex justify-center">
+        <a asp-action="List" asp-controller="Movie" class="text-sm mx-auto items-center border border-gray-300 bg-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  px-4 py-3 text-center text-white">
+            <i class="fas fa-backward pr-2"></i>Back To List
+        </a>
+    </div>
+</div>
