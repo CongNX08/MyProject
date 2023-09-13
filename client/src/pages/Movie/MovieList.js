@@ -1,36 +1,82 @@
 import { useState, useEffect } from "react";
 import { fetchAllMovie } from "../../services/MovieServices";
-import axios from "axios";
 
 function MovieList() {
   const [listMovies, setListMovies] = useState([]);
-  useEffect(() => {
-    getUsers();
-  }, []);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [startPage, setStartPage] = useState(1);
+  const [endPage, setEndPage] = useState(3); // Hiển thị 3 trang ban đầu
 
-  const getUsers = async () => {
-    let res = await fetchAllMovie();
-    console.log(res);
+  useEffect(() => {
+    getMovies(currentPage);
+  }, [currentPage]);
+
+  const getMovies = async (page) => {
+    let res = await fetchAllMovie(page);
+
     if (res) {
       setListMovies(res);
+      let totalData = res[0].countNumberofResult;
+      let ttPages = 0;
+
+      if (totalData % 3 !== 0) {
+        ttPages = Math.floor(totalData / 3) + 1;
+      } else {
+        ttPages = totalData / 3;
+      }
+      setTotalPages(ttPages);
     }
+  };
+
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+    if (page >= 2 && page <= totalPages - 1) {
+      setStartPage(page - 1);
+      setEndPage(page + 1);
+    } else if (page === totalPages) {
+      setStartPage(totalPages - 2);
+      setEndPage(totalPages);
+    } else {
+      setStartPage(1);
+      setEndPage(3);
+    }
+  };
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(
+        <li
+          key={i}
+          className={`inline-block px-2 py-1 mx-1 border rounded ${
+            i === currentPage ? "bg-blue-500 text-white" : "bg-gray-200"
+          }`}
+        >
+          <button onClick={() => handlePageClick(i)}>{i}</button>
+        </li>
+      );
+    }
+
+    return pageNumbers;
   };
   return (
     <>
       <div className="container mx-auto mt-6">
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-          <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" className="px-6 py-3">
                   Title
                 </th>
-                <th scope="col" class="px-6 py-3">
-                  <div class="flex items-center">
+                <th scope="col" className="px-6 py-3">
+                  <div className="flex items-center">
                     Description
                     <a href="#">
                       <svg
-                        class="w-3 h-3 ml-1.5"
+                        className="w-3 h-3 ml-1.5"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"
@@ -41,12 +87,12 @@ function MovieList() {
                     </a>
                   </div>
                 </th>
-                <th scope="col" class="px-6 py-3">
-                  <div class="flex items-center">
+                <th scope="col" className="px-6 py-3">
+                  <div className="flex items-center">
                     Genre
                     <a href="#">
                       <svg
-                        class="w-3 h-3 ml-1.5"
+                        className="w-3 h-3 ml-1.5"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"
@@ -57,12 +103,12 @@ function MovieList() {
                     </a>
                   </div>
                 </th>
-                <th scope="col" class="px-6 py-3">
-                  <div class="flex items-center">
+                <th scope="col" className="px-6 py-3">
+                  <div className="flex items-center">
                     Year
                     <a href="#">
                       <svg
-                        class="w-3 h-3 ml-1.5"
+                        className="w-3 h-3 ml-1.5"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"
@@ -73,12 +119,12 @@ function MovieList() {
                     </a>
                   </div>
                 </th>
-                <th scope="col" class="px-6 py-3">
-                  <div class="flex items-center">
+                <th scope="col" className="px-6 py-3">
+                  <div className="flex items-center">
                     Rating points
                     <a href="#">
                       <svg
-                        class="w-3 h-3 ml-1.5"
+                        className="w-3 h-3 ml-1.5"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"
@@ -89,12 +135,12 @@ function MovieList() {
                     </a>
                   </div>
                 </th>
-                <th scope="col" class="px-6 py-3">
-                  <div class="flex items-center">
+                <th scope="col" className="px-6 py-3">
+                  <div className="flex items-center">
                     Image
                     <a href="#">
                       <svg
-                        class="w-3 h-3 ml-1.5"
+                        className="w-3 h-3 ml-1.5"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="currentColor"
@@ -105,8 +151,8 @@ function MovieList() {
                     </a>
                   </div>
                 </th>
-                <th scope="col" class="px-6 py-3">
-                  <span class="">Actions</span>
+                <th scope="col" className="px-6 py-3">
+                  <span className="">Actions</span>
                 </th>
               </tr>
             </thead>
@@ -117,31 +163,31 @@ function MovieList() {
                   return (
                     <tr
                       key={item.movieId}
-                      class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                     >
                       <th
                         scope="row"
-                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                       >
                         {item.title}
                       </th>
-                      <td class="px-6 py-4">{item.description}</td>
-                      <td class="px-6 py-4">{item.genre}</td>
-                      <td class="px-6 py-4">{item.year}</td>
-                      <td class="px-6 py-4">
-                        {item.ratingPoint} <i class="fa-solid fa-star"></i>{" "}
+                      <td className="px-6 py-4">{item.description}</td>
+                      <td className="px-6 py-4">{item.genre}</td>
+                      <td className="px-6 py-4">{item.year}</td>
+                      <td className="px-6 py-4">
+                        {item.ratingPoint} <i className="fa-solid fa-star"></i>{" "}
                       </td>
-                      <td class="px-6 py-4">
+                      <td className="px-6 py-4">
                         <img
-                          class="object-cover h-36 w-72"
+                          className="object-cover h-36 w-72"
                           src={item.image}
                           alt="#"
                         />
                       </td>
-                      <td class="px-6 py-4 text-right">
+                      <td className="px-6 py-4 text-right">
                         <a
                           href="#"
-                          class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                          className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                         >
                           Edit
                         </a>
@@ -151,6 +197,40 @@ function MovieList() {
                 })}
             </tbody>
           </table>
+        </div>
+        <div className="mt-3 flex justify-center ">
+          <nav aria-label="Page navigation example">
+            <ul className="flex space-x-2">
+              <li
+                className={`inline-block px-2 py-1 mx-1 border rounded ${
+                  currentPage === 1 ? "bg-gray-200" : "bg-blue-500 text-white"
+                }`}
+              >
+                <button
+                  onClick={() => handlePageClick(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+              </li>
+
+              {renderPageNumbers()}
+              <li
+                className={`inline-block px-2 py-1 mx-1 border rounded ${
+                  currentPage === totalPages
+                    ? "bg-gray-200"
+                    : "bg-blue-500 text-white"
+                }`}
+              >
+                <button
+                  onClick={() => handlePageClick(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </button>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </>
