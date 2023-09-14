@@ -2,9 +2,12 @@ import Table from "react-bootstrap/Table";
 import { useState, useEffect } from "react";
 import { fetchAllMovie } from "../../services/MovieServices";
 import ReactPaginate from "react-paginate";
+import ModalAddNew from "./ModalAddNew";
+
 function MovieList() {
   const [listMovies, setListMovies] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
+  const [showModal, setShowModal] = useState(false);
   useEffect(() => {
     getMovies(1);
   }, []);
@@ -14,8 +17,6 @@ function MovieList() {
     let rawTotalPages = +res[0].countNumberofResult;
     let totalPagesAPI = Math.ceil(rawTotalPages / 3);
     setTotalPages(totalPagesAPI);
-    console.log(res);
-    console.log(totalPages);
 
     if (res) {
       setListMovies(res);
@@ -25,8 +26,22 @@ function MovieList() {
     console.log(event.selected);
     getMovies(+event.selected + 1);
   };
+
+  const handleShowModal = () => {
+    setShowModal(true);
+  };
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
   return (
     <>
+      <div className="d-flex justify-content-between m-3">
+        <div>ListMovies</div>
+        <button className="btn-success" onClick={() => handleShowModal()}>
+          Add New
+        </button>
+      </div>
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -84,6 +99,7 @@ function MovieList() {
         containerClassName="pagination"
         activeClassName="active"
       />
+      <ModalAddNew show={showModal} handleClose={handleCloseModal} />
     </>
   );
 }
