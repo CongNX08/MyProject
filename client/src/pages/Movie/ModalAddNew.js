@@ -2,21 +2,66 @@ import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { fetchAllGenre } from "../../services/GenreServices";
+import { postCreateMovie } from "../../services/MovieServices";
+import { toast } from "react-toastify";
+import FileBase64 from "react-file-base64";
 function ModalAddNew(props) {
-  const { show, handleClose } = props;
+  const { show, handleClose, handleUpdateMovie } = props;
+  const [genreList, setgenreList] = useState([]);
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [year, setYear] = useState("");
-  const [genre, setGenres] = useState([]);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [ratingPoint, setRatingPoint] = useState("");
+  const [genreId, setGenreId] = useState("");
+  const [image, setImage] = useState("");
+  // const [previewImage, setPreviewImage] = useState("");
+
   useEffect(() => {
     getGenres();
   }, []);
 
   const getGenres = async () => {
     let res = await fetchAllGenre();
-    setGenres(res);
-    console.log(res);
+    setgenreList(res);
+  };
+
+  const handleSelectImage = (base64Files) => {
+    setImage(base64Files.base64);
+  };
+
+  const handleSaveMovie = async () => {
+    console.log(image);
+    let res = await postCreateMovie(
+      title,
+      description,
+      year,
+      ratingPoint,
+      genreId,
+      image
+    );
+    if (res) {
+      handleClose();
+      setTitle("");
+      setDescription("");
+      setYear("");
+      setRatingPoint("");
+      setGenreId("");
+      setImage("");
+      handleUpdateMovie({
+        // Gọi handleUpdateMovie để thêm phim vào danh sách
+        movieId: res.movieId, // Đảm bảo rằng bạn có thông tin cần thiết của phim
+        title,
+        description,
+        year,
+        ratingPoint,
+        genreId,
+        image,
+      });
+      toast.success("Movie added successfully");
+    } else {
+      toast.error("Something went wrong");
+    }
   };
 
   return (
@@ -51,10 +96,13 @@ function ModalAddNew(props) {
               <select
                 className="form-select"
                 aria-label="Default select example"
+                onChange={(event) => setGenreId(event.target.value)}
               >
                 <option defaultValue>Open this select menu</option>
-                {genre.map((item) => (
-                  <option key={item.genreId}>{item.description}</option>
+                {genreList.map((item) => (
+                  <option key={item.genreId} value={item.genreId}>
+                    {item.description}
+                  </option>
                 ))}
               </select>
             </div>
@@ -68,36 +116,31 @@ function ModalAddNew(props) {
               />
             </div>
             <div className="form-group">
+              <label>RatingPoint</label>
+              <input
+                type="number"
+                className="form-control"
+                value={ratingPoint}
+                onChange={(event) => setRatingPoint(event.target.value)}
+              />
+            </div>
+            <div className="form-group">
               <label>Image</label>
-              {selectedImage && (
+              <FileBase64 multiple={false} onDone={handleSelectImage} />
+              {image && (
                 <div>
                   <div className="d-flex justify-content-center">
-                    <img
-                      alt="not found"
-                      width={"100px"}
-                      src={URL.createObjectURL(selectedImage)}
-                    />
+                    <img alt="not found" width={"100px"} src={image} />
                   </div>
                   <br />
                   <button
                     className="btn-danger mt-3"
-                    onClick={() => setSelectedImage(null)}
+                    onClick={() => setImage(null)}
                   >
                     Remove
                   </button>
                 </div>
               )}
-
-              <br />
-
-              <input
-                type="file"
-                name="myImage"
-                onChange={(event) => {
-                  console.log(event.target.files[0]);
-                  setSelectedImage(event.target.files[0]);
-                }}
-              />
             </div>
           </div>
         </Modal.Body>
@@ -105,7 +148,7 @@ function ModalAddNew(props) {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleClose}>
+          <Button variant="primary" onClick={handleSaveMovie}>
             Save Changes
           </Button>
         </Modal.Footer>

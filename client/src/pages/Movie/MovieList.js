@@ -19,7 +19,7 @@ function MovieList() {
     setTotalPages(totalPagesAPI);
 
     if (res) {
-      setListMovies(res);
+      setListMovies([...res].reverse());
     }
   };
   const handlePageClick = (event) => {
@@ -32,6 +32,9 @@ function MovieList() {
   };
   const handleCloseModal = () => {
     setShowModal(false);
+  };
+  const handleUpdateMovie = (movie) => {
+    setListMovies([movie, ...listMovies]);
   };
 
   return (
@@ -99,7 +102,11 @@ function MovieList() {
         containerClassName="pagination"
         activeClassName="active"
       />
-      <ModalAddNew show={showModal} handleClose={handleCloseModal} />
+      <ModalAddNew
+        show={showModal}
+        handleClose={handleCloseModal}
+        handleUpdateMovie={handleUpdateMovie}
+      />
     </>
   );
 }

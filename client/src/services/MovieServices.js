@@ -3,4 +3,21 @@ const fetchAllMovie = (page) => {
   return axios.get(`Movie?pageSize=3&pageNumber=${page}`);
 };
 
-export { fetchAllMovie };
+const postCreateMovie = (
+  title,
+  description,
+  year,
+  ratingPoint,
+  genreId,
+  image
+) => {
+  return axios.post(`Movie`, {
+    title,
+    description,
+    year,
+    ratingPoint,
+    genreId,
+    image,
+  });
+};
+export { fetchAllMovie, postCreateMovie };

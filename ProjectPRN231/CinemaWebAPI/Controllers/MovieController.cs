@@ -35,13 +35,13 @@ namespace CinemaWebAPI.Controllers
             IEnumerable<Movie> MovieList = await _dbMovie.GetAllAsync(includeProperties: "Genre", pageSize: pageSize, pageNumber: pageNumber);
             IEnumerable<Movie> MovieTotal = await _dbMovie.GetAllAsync(includeProperties: "Genre");
 
-            if(genreId != null && !string.IsNullOrEmpty(titleSearch))
+            if (genreId != null && !string.IsNullOrEmpty(titleSearch))
             {
                 string search = titleSearch.ToLower();
                 MovieList = await _dbMovie.GetAllAsync(u => u.GenreId == genreId && u.Title.ToLower().Contains(search), includeProperties: "Genre", pageSize: pageSize, pageNumber: pageNumber);
                 MovieTotal = await _dbMovie.GetAllAsync(u => u.GenreId == genreId && u.Title.ToLower().Contains(search), includeProperties: "Genre");
             }
-            else if(genreId != null)
+            else if (genreId != null)
             {
                 MovieList = await _dbMovie.GetAllAsync(u => u.GenreId == genreId, includeProperties: "Genre", pageSize: pageSize, pageNumber: pageNumber);
                 MovieTotal = await _dbMovie.GetAllAsync(u => u.GenreId == genreId, includeProperties: "Genre");
@@ -63,7 +63,7 @@ namespace CinemaWebAPI.Controllers
             List<MovieDTO> listDTO = _mapper.Map<List<MovieDTO>>(MovieList);
             List<MovieDTO> listDTO2 = _mapper.Map<List<MovieDTO>>(MovieTotal);
 
-            listDTO.ForEach(dto => dto.CountNumberofResult =  listDTO2.Count);
+            listDTO.ForEach(dto => dto.CountNumberofResult = listDTO2.Count);
 
             return Ok(listDTO);
         }
