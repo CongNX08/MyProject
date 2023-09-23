@@ -3,11 +3,18 @@ import { useState, useEffect } from "react";
 import { fetchAllMovie } from "../../services/MovieServices";
 import ReactPaginate from "react-paginate";
 import ModalAddNew from "./ModalAddNew";
+import ModalDelete from "./ModalDelete";
+import _ from "lodash";
 
 function MovieList() {
   const [listMovies, setListMovies] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
-  const [showModal, setShowModal] = useState(false);
+  const [isShowModelAddNew, setShowModalAddNew] = useState(false);
+
+  const [isShowModelDelete, setIsShowModelDelete] = useState(false);
+  const [dataMovieDelete, setDataMovieDelete] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+
   useEffect(() => {
     getMovies(1);
   }, []);
@@ -15,33 +22,59 @@ function MovieList() {
   const getMovies = async (page) => {
     let res = await fetchAllMovie(page);
     let rawTotalPages = +res[0].countNumberofResult;
-    let totalPagesAPI = Math.ceil(rawTotalPages / 3);
+    let totalPagesAPI = Math.ceil(rawTotalPages / 5);
     setTotalPages(totalPagesAPI);
 
     if (res) {
-      setListMovies([...res].reverse());
+      setListMovies([...res]);
     }
   };
+
   const handlePageClick = (event) => {
     console.log(event.selected);
+    setCurrentPage(event.selected + 1);
     getMovies(+event.selected + 1);
   };
 
-  const handleShowModal = () => {
-    setShowModal(true);
+  const handleShowModalAddNew = () => {
+    setShowModalAddNew(true);
   };
   const handleCloseModal = () => {
-    setShowModal(false);
+    setShowModalAddNew(false);
+    setIsShowModelDelete(false);
   };
   const handleUpdateMovie = (movie) => {
-    setListMovies([movie, ...listMovies]);
+    if (listMovies.length < 5) {
+      setListMovies([...listMovies, movie]);
+    } else {
+      setTotalPages(totalPages + 1);
+    }
   };
 
+  const handleEditMovie = () => {};
+
+  const handleDeleteMovie = (movie) => {
+    setIsShowModelDelete(true);
+    setDataMovieDelete(movie);
+    console.log(movie);
+  };
+
+  const handleDeleteMovieFromModel = (movie) => {
+    getMovies(currentPage);
+    // console.log("check movie res", movie);
+    // let cloneListMovies = _.cloneDeep(listMovies);
+
+    // cloneListMovies = cloneListMovies.filter(
+    //   (item) => item.movieId !== movie.movieId
+    // );
+    // console.log(cloneListMovies);
+    // setListMovies(cloneListMovies);
+  };
   return (
     <>
       <div className="d-flex justify-content-between m-3">
         <div>ListMovies</div>
-        <button className="btn-success" onClick={() => handleShowModal()}>
+        <button className="btn-success" onClick={() => handleShowModalAddNew()}>
           Add New
         </button>
       </div>
@@ -72,12 +105,27 @@ function MovieList() {
                     <img
                       src={item.image}
                       alt="img"
-                      className="img-fluid "
                       width="100px"
-                      height="100px"
+                      height="120px"
                     ></img>
                   </td>
-                  <td>Action</td>
+                  <td className="d-flex  ">
+                    <button
+                      className="btn-warning mx-3 "
+                      onClick={() => handleEditMovie(item)}
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      className="btn-danger"
+                      onClick={() => {
+                        handleDeleteMovie(item);
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               );
             })}
@@ -103,9 +151,17 @@ function MovieList() {
         activeClassName="active"
       />
       <ModalAddNew
-        show={showModal}
+        show={isShowModelAddNew}
         handleClose={handleCloseModal}
         handleUpdateMovie={handleUpdateMovie}
+      />
+
+      <ModalDelete
+        show={isShowModelDelete}
+        handleClose={handleCloseModal}
+        dataMovieDelete={dataMovieDelete}
+        getMovies={getMovies}
+        handleDeleteMovieFromModel={handleDeleteMovieFromModel}
       />
     </>
   );

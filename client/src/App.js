@@ -1,9 +1,10 @@
 import "./App.css";
 import Header from "./layout/Header/Header";
-import MovieList from "./pages/Movie/MovieList";
+
 import { Container } from "react-bootstrap";
 
 import { ToastContainer, toast } from "react-toastify";
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
   return (
@@ -11,7 +12,7 @@ function App() {
       <div className="app-container">
         <Header />
         <Container>
-          <MovieList />
+          <AppRoutes />
         </Container>
       </div>
       <ToastContainer

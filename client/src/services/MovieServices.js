@@ -1,6 +1,6 @@
 import axios from "./customize-axios";
 const fetchAllMovie = (page) => {
-  return axios.get(`Movie?pageSize=3&pageNumber=${page}`);
+  return axios.get(`Movie?pageSize=5&pageNumber=${page}`);
 };
 
 const postCreateMovie = (
@@ -20,4 +20,8 @@ const postCreateMovie = (
     image,
   });
 };
-export { fetchAllMovie, postCreateMovie };
+
+const deleteMovie = (id) => {
+  return axios.delete(`Movie?id=${id}`);
+};
+export { fetchAllMovie, postCreateMovie, deleteMovie };
